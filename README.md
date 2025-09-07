@@ -73,7 +73,7 @@ CREATE TABLE Empleados (
 ⚙️ 2. Procedimientos Almacenados (CRUD para 8 tablas)
 🔹 Clientes
 sql
-Copiar código
+
 CREATE OR ALTER PROCEDURE InsertarCliente
     @nombre NVARCHAR(100), @email NVARCHAR(100), @telefono NVARCHAR(20)
 AS
@@ -104,9 +104,10 @@ BEGIN
     DELETE FROM Clientes WHERE id_cliente=@id_cliente;
 END
 GO
+
 🔹 Categorias
 sql
-Copiar código
+
 CREATE OR ALTER PROCEDURE InsertarCategoria
     @nombre NVARCHAR(100)
 AS
@@ -137,9 +138,10 @@ BEGIN
     DELETE FROM Categorias WHERE id_categoria=@id_categoria;
 END
 GO
+
 🔹 Productos
 sql
-Copiar código
+
 CREATE OR ALTER PROCEDURE InsertarProducto
     @nombre NVARCHAR(100), @precio DECIMAL(10,2), @id_categoria INT
 AS
@@ -170,9 +172,10 @@ BEGIN
     DELETE FROM Productos WHERE id_producto=@id_producto;
 END
 GO
+
 🔹 Proveedores
 sql
-Copiar código
+
 CREATE OR ALTER PROCEDURE InsertarProveedor
     @nombre NVARCHAR(100), @telefono NVARCHAR(20)
 AS
@@ -203,9 +206,10 @@ BEGIN
     DELETE FROM Proveedores WHERE id_proveedor=@id_proveedor;
 END
 GO
+
 🔹 Inventario
 sql
-Copiar código
+
 CREATE OR ALTER PROCEDURE InsertarInventario
     @id_producto INT, @cantidad INT
 AS
@@ -236,9 +240,10 @@ BEGIN
     DELETE FROM Inventario WHERE id_inventario=@id_inventario;
 END
 GO
+
 🔹 Ventas
 sql
-Copiar código
+
 CREATE OR ALTER PROCEDURE InsertarVenta
     @id_cliente INT, @fecha DATE, @total DECIMAL(10,2)
 AS
@@ -269,9 +274,10 @@ BEGIN
     DELETE FROM Ventas WHERE id_venta=@id_venta;
 END
 GO
+
 🔹 DetalleVentas
 sql
-Copiar código
+
 CREATE OR ALTER PROCEDURE InsertarDetalleVenta
     @id_venta INT, @id_producto INT, @cantidad INT, @precio DECIMAL(10,2)
 AS
@@ -302,9 +308,10 @@ BEGIN
     DELETE FROM DetalleVentas WHERE id_detalle=@id_detalle;
 END
 GO
+
 🔹 Empleados
 sql
-Copiar código
+
 CREATE OR ALTER PROCEDURE InsertarEmpleado
     @nombre NVARCHAR(100), @cargo NVARCHAR(50), @salario DECIMAL(10,2)
 AS
