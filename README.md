@@ -1,188 +1,398 @@
 # crud_python_modelo_datos
-📌 Sistema de Ventas – Modelo de Datos + Procedimientos + Backend en Python
+# 📌 Sistema de Ventas – SQL Server + Python
 
-Este ejemplo muestra cómo construir un sistema de ventas con:
+## 🗄️ 1. Modelo de Datos en SQL Server
 
-Modelo de datos con 8 tablas en MySQL
-
-Procedimientos almacenados para CRUD
-
-Backend en Python para conectarse y ejecutar operaciones
-
-🗄️ 1. Modelo de Datos (8 Tablas en MySQL)
-CREATE DATABASE IF NOT EXISTS SistemaVentas;
+```sql
+CREATE DATABASE SistemaVentas;
+GO
 USE SistemaVentas;
+GO
 
 -- Tabla Clientes
 CREATE TABLE Clientes (
-    id_cliente INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100),
-    email VARCHAR(100),
-    telefono VARCHAR(20)
+    id_cliente INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100),
+    email NVARCHAR(100),
+    telefono NVARCHAR(20)
 );
 
 -- Tabla Categorias
 CREATE TABLE Categorias (
-    id_categoria INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100)
+    id_categoria INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100)
 );
 
 -- Tabla Productos
 CREATE TABLE Productos (
-    id_producto INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100),
+    id_producto INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100),
     precio DECIMAL(10,2),
-    id_categoria INT,
-    FOREIGN KEY (id_categoria) REFERENCES Categorias(id_categoria)
+    id_categoria INT FOREIGN KEY REFERENCES Categorias(id_categoria)
 );
 
 -- Tabla Proveedores
 CREATE TABLE Proveedores (
-    id_proveedor INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100),
-    telefono VARCHAR(20)
+    id_proveedor INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100),
+    telefono NVARCHAR(20)
 );
 
 -- Tabla Inventario
 CREATE TABLE Inventario (
-    id_inventario INT AUTO_INCREMENT PRIMARY KEY,
-    id_producto INT,
-    cantidad INT,
-    FOREIGN KEY (id_producto) REFERENCES Productos(id_producto)
+    id_inventario INT IDENTITY(1,1) PRIMARY KEY,
+    id_producto INT FOREIGN KEY REFERENCES Productos(id_producto),
+    cantidad INT
 );
 
 -- Tabla Ventas
 CREATE TABLE Ventas (
-    id_venta INT AUTO_INCREMENT PRIMARY KEY,
-    id_cliente INT,
+    id_venta INT IDENTITY(1,1) PRIMARY KEY,
+    id_cliente INT FOREIGN KEY REFERENCES Clientes(id_cliente),
     fecha DATE,
-    total DECIMAL(10,2),
-    FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente)
+    total DECIMAL(10,2)
 );
 
 -- Tabla DetalleVentas
 CREATE TABLE DetalleVentas (
-    id_detalle INT AUTO_INCREMENT PRIMARY KEY,
-    id_venta INT,
-    id_producto INT,
+    id_detalle INT IDENTITY(1,1) PRIMARY KEY,
+    id_venta INT FOREIGN KEY REFERENCES Ventas(id_venta),
+    id_producto INT FOREIGN KEY REFERENCES Productos(id_producto),
     cantidad INT,
-    precio DECIMAL(10,2),
-    FOREIGN KEY (id_venta) REFERENCES Ventas(id_venta),
-    FOREIGN KEY (id_producto) REFERENCES Productos(id_producto)
+    precio DECIMAL(10,2)
 );
 
 -- Tabla Empleados
 CREATE TABLE Empleados (
-    id_empleado INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100),
-    cargo VARCHAR(50),
+    id_empleado INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100),
+    cargo NVARCHAR(50),
     salario DECIMAL(10,2)
 );
 
-⚙️ 2. Procedimientos Almacenados (CRUD)
-
-Ejemplo para la tabla Clientes:
-
--- Insertar Cliente
-DELIMITER //
-CREATE PROCEDURE InsertarCliente(IN p_nombre VARCHAR(100), IN p_email VARCHAR(100), IN p_telefono VARCHAR(20))
+⚙️ 2. Procedimientos Almacenados (CRUD para 8 tablas)
+🔹 Clientes
+sql
+Copiar código
+CREATE OR ALTER PROCEDURE InsertarCliente
+    @nombre NVARCHAR(100), @email NVARCHAR(100), @telefono NVARCHAR(20)
+AS
 BEGIN
-    INSERT INTO Clientes(nombre, email, telefono) VALUES (p_nombre, p_email, p_telefono);
-END //
-DELIMITER ;
+    INSERT INTO Clientes(nombre, email, telefono) VALUES (@nombre, @email, @telefono);
+END
+GO
 
--- Consultar Clientes
-DELIMITER //
-CREATE PROCEDURE ConsultarClientes()
+CREATE OR ALTER PROCEDURE ConsultarClientes
+AS
 BEGIN
     SELECT * FROM Clientes;
-END //
-DELIMITER ;
+END
+GO
 
--- Actualizar Cliente
-DELIMITER //
-CREATE PROCEDURE ActualizarCliente(IN p_id INT, IN p_nombre VARCHAR(100), IN p_email VARCHAR(100), IN p_telefono VARCHAR(20))
+CREATE OR ALTER PROCEDURE ActualizarCliente
+    @id_cliente INT, @nombre NVARCHAR(100), @email NVARCHAR(100), @telefono NVARCHAR(20)
+AS
 BEGIN
-    UPDATE Clientes 
-    SET nombre = p_nombre, email = p_email, telefono = p_telefono 
-    WHERE id_cliente = p_id;
-END //
-DELIMITER ;
+    UPDATE Clientes SET nombre=@nombre, email=@email, telefono=@telefono WHERE id_cliente=@id_cliente;
+END
+GO
 
--- Eliminar Cliente
-DELIMITER //
-CREATE PROCEDURE EliminarCliente(IN p_id INT)
+CREATE OR ALTER PROCEDURE EliminarCliente
+    @id_cliente INT
+AS
 BEGIN
-    DELETE FROM Clientes WHERE id_cliente = p_id;
-END //
-DELIMITER ;
+    DELETE FROM Clientes WHERE id_cliente=@id_cliente;
+END
+GO
+🔹 Categorias
+sql
+Copiar código
+CREATE OR ALTER PROCEDURE InsertarCategoria
+    @nombre NVARCHAR(100)
+AS
+BEGIN
+    INSERT INTO Categorias(nombre) VALUES (@nombre);
+END
+GO
 
-👉 Esta misma lógica se puede replicar para las demás tablas (Productos, Categorias, Proveedores, etc.).
-🐍 3. Backend en Python (CRUD con Stored Procedures)
-Instalación del conector:
-pip install mysql-connector-python
+CREATE OR ALTER PROCEDURE ConsultarCategorias
+AS
+BEGIN
+    SELECT * FROM Categorias;
+END
+GO
 
-Código Python:
-import mysql.connector
+CREATE OR ALTER PROCEDURE ActualizarCategoria
+    @id_categoria INT, @nombre NVARCHAR(100)
+AS
+BEGIN
+    UPDATE Categorias SET nombre=@nombre WHERE id_categoria=@id_categoria;
+END
+GO
 
-# ---- Conexión ----
+CREATE OR ALTER PROCEDURE EliminarCategoria
+    @id_categoria INT
+AS
+BEGIN
+    DELETE FROM Categorias WHERE id_categoria=@id_categoria;
+END
+GO
+🔹 Productos
+sql
+Copiar código
+CREATE OR ALTER PROCEDURE InsertarProducto
+    @nombre NVARCHAR(100), @precio DECIMAL(10,2), @id_categoria INT
+AS
+BEGIN
+    INSERT INTO Productos(nombre, precio, id_categoria) VALUES (@nombre, @precio, @id_categoria);
+END
+GO
+
+CREATE OR ALTER PROCEDURE ConsultarProductos
+AS
+BEGIN
+    SELECT * FROM Productos;
+END
+GO
+
+CREATE OR ALTER PROCEDURE ActualizarProducto
+    @id_producto INT, @nombre NVARCHAR(100), @precio DECIMAL(10,2), @id_categoria INT
+AS
+BEGIN
+    UPDATE Productos SET nombre=@nombre, precio=@precio, id_categoria=@id_categoria WHERE id_producto=@id_producto;
+END
+GO
+
+CREATE OR ALTER PROCEDURE EliminarProducto
+    @id_producto INT
+AS
+BEGIN
+    DELETE FROM Productos WHERE id_producto=@id_producto;
+END
+GO
+🔹 Proveedores
+sql
+Copiar código
+CREATE OR ALTER PROCEDURE InsertarProveedor
+    @nombre NVARCHAR(100), @telefono NVARCHAR(20)
+AS
+BEGIN
+    INSERT INTO Proveedores(nombre, telefono) VALUES (@nombre, @telefono);
+END
+GO
+
+CREATE OR ALTER PROCEDURE ConsultarProveedores
+AS
+BEGIN
+    SELECT * FROM Proveedores;
+END
+GO
+
+CREATE OR ALTER PROCEDURE ActualizarProveedor
+    @id_proveedor INT, @nombre NVARCHAR(100), @telefono NVARCHAR(20)
+AS
+BEGIN
+    UPDATE Proveedores SET nombre=@nombre, telefono=@telefono WHERE id_proveedor=@id_proveedor;
+END
+GO
+
+CREATE OR ALTER PROCEDURE EliminarProveedor
+    @id_proveedor INT
+AS
+BEGIN
+    DELETE FROM Proveedores WHERE id_proveedor=@id_proveedor;
+END
+GO
+🔹 Inventario
+sql
+Copiar código
+CREATE OR ALTER PROCEDURE InsertarInventario
+    @id_producto INT, @cantidad INT
+AS
+BEGIN
+    INSERT INTO Inventario(id_producto, cantidad) VALUES (@id_producto, @cantidad);
+END
+GO
+
+CREATE OR ALTER PROCEDURE ConsultarInventario
+AS
+BEGIN
+    SELECT * FROM Inventario;
+END
+GO
+
+CREATE OR ALTER PROCEDURE ActualizarInventario
+    @id_inventario INT, @id_producto INT, @cantidad INT
+AS
+BEGIN
+    UPDATE Inventario SET id_producto=@id_producto, cantidad=@cantidad WHERE id_inventario=@id_inventario;
+END
+GO
+
+CREATE OR ALTER PROCEDURE EliminarInventario
+    @id_inventario INT
+AS
+BEGIN
+    DELETE FROM Inventario WHERE id_inventario=@id_inventario;
+END
+GO
+🔹 Ventas
+sql
+Copiar código
+CREATE OR ALTER PROCEDURE InsertarVenta
+    @id_cliente INT, @fecha DATE, @total DECIMAL(10,2)
+AS
+BEGIN
+    INSERT INTO Ventas(id_cliente, fecha, total) VALUES (@id_cliente, @fecha, @total);
+END
+GO
+
+CREATE OR ALTER PROCEDURE ConsultarVentas
+AS
+BEGIN
+    SELECT * FROM Ventas;
+END
+GO
+
+CREATE OR ALTER PROCEDURE ActualizarVenta
+    @id_venta INT, @id_cliente INT, @fecha DATE, @total DECIMAL(10,2)
+AS
+BEGIN
+    UPDATE Ventas SET id_cliente=@id_cliente, fecha=@fecha, total=@total WHERE id_venta=@id_venta;
+END
+GO
+
+CREATE OR ALTER PROCEDURE EliminarVenta
+    @id_venta INT
+AS
+BEGIN
+    DELETE FROM Ventas WHERE id_venta=@id_venta;
+END
+GO
+🔹 DetalleVentas
+sql
+Copiar código
+CREATE OR ALTER PROCEDURE InsertarDetalleVenta
+    @id_venta INT, @id_producto INT, @cantidad INT, @precio DECIMAL(10,2)
+AS
+BEGIN
+    INSERT INTO DetalleVentas(id_venta, id_producto, cantidad, precio) VALUES (@id_venta, @id_producto, @cantidad, @precio);
+END
+GO
+
+CREATE OR ALTER PROCEDURE ConsultarDetalleVentas
+AS
+BEGIN
+    SELECT * FROM DetalleVentas;
+END
+GO
+
+CREATE OR ALTER PROCEDURE ActualizarDetalleVenta
+    @id_detalle INT, @id_venta INT, @id_producto INT, @cantidad INT, @precio DECIMAL(10,2)
+AS
+BEGIN
+    UPDATE DetalleVentas SET id_venta=@id_venta, id_producto=@id_producto, cantidad=@cantidad, precio=@precio WHERE id_detalle=@id_detalle;
+END
+GO
+
+CREATE OR ALTER PROCEDURE EliminarDetalleVenta
+    @id_detalle INT
+AS
+BEGIN
+    DELETE FROM DetalleVentas WHERE id_detalle=@id_detalle;
+END
+GO
+🔹 Empleados
+sql
+Copiar código
+CREATE OR ALTER PROCEDURE InsertarEmpleado
+    @nombre NVARCHAR(100), @cargo NVARCHAR(50), @salario DECIMAL(10,2)
+AS
+BEGIN
+    INSERT INTO Empleados(nombre, cargo, salario) VALUES (@nombre, @cargo, @salario);
+END
+GO
+
+CREATE OR ALTER PROCEDURE ConsultarEmpleados
+AS
+BEGIN
+    SELECT * FROM Empleados;
+END
+GO
+
+CREATE OR ALTER PROCEDURE ActualizarEmpleado
+    @id_empleado INT, @nombre NVARCHAR(100), @cargo NVARCHAR(50), @salario DECIMAL(10,2)
+AS
+BEGIN
+    UPDATE Empleados SET nombre=@nombre, cargo=@cargo, salario=@salario WHERE id_empleado=@id_empleado;
+END
+GO
+
+CREATE OR ALTER PROCEDURE EliminarEmpleado
+    @id_empleado INT
+AS
+BEGIN
+    DELETE FROM Empleados WHERE id_empleado=@id_empleado;
+END
+GO
+
+🐍 3. Backend en Python (conexión a SQL Server)
+
+python
+import pyodbc
+
 def get_connection():
-    return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="tu_password",
-        database="SistemaVentas"
+    return pyodbc.connect(
+        "DRIVER={ODBC Driver 17 for SQL Server};"
+        "SERVER=localhost;"          # Cambia si usas otro servidor
+        "DATABASE=SistemaVentas;"
+        "UID=sa;"                    # Usuario de SQL Server
+        "PWD=tu_password;"
+        "TrustServerCertificate=Yes;"
     )
 
-# ---- Insertar Cliente ----
+# ---- Ejemplo con Clientes ----
 def insertar_cliente(nombre, email, telefono):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.callproc("InsertarCliente", (nombre, email, telefono))
+    cursor.execute("{CALL InsertarCliente(?, ?, ?)}", (nombre, email, telefono))
     conn.commit()
     conn.close()
-    print("✅ Cliente insertado con éxito")
 
-# ---- Consultar Clientes ----
 def consultar_clientes():
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.callproc("ConsultarClientes")
-    for result in cursor.stored_results():
-        for row in result.fetchall():
-            print(row)
+    cursor.execute("{CALL ConsultarClientes}")
+    for row in cursor.fetchall():
+        print(row)
     conn.close()
 
-# ---- Actualizar Cliente ----
 def actualizar_cliente(id_cliente, nombre, email, telefono):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.callproc("ActualizarCliente", (id_cliente, nombre, email, telefono))
+    cursor.execute("{CALL ActualizarCliente(?, ?, ?, ?)}", (id_cliente, nombre, email, telefono))
     conn.commit()
     conn.close()
-    print("✅ Cliente actualizado")
 
-# ---- Eliminar Cliente ----
 def eliminar_cliente(id_cliente):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.callproc("EliminarCliente", (id_cliente,))
+    cursor.execute("{CALL EliminarCliente(?)}", (id_cliente,))
     conn.commit()
     conn.close()
-    print("✅ Cliente eliminado")
 
-
-# ---- Ejemplo de uso ----
+# ---- Uso de prueba ----
 if __name__ == "__main__":
     insertar_cliente("Carlos Pérez", "carlos@mail.com", "3001234567")
     consultar_clientes()
-    actualizar_cliente(1, "Carlos P. Tapiero", "carlos_tapiero@mail.com", "3019876543")
+    actualizar_cliente(1, "Carlos Tapiero", "ctapiero@mail.com", "3019876543")
     consultar_clientes()
     eliminar_cliente(1)
     consultar_clientes()
 
 ✅ Conclusión
-Con este ejemplo tienes:
-Modelo de datos con 8 tablas.
-Procedimientos almacenados CRUD (ejemplo en Clientes, aplicable a las demás).
-Backend en Python conectado a MySQL ejecutando las operaciones de Insertar, Consultar, Actualizar y Eliminar.
+
+Con esta implementación tienes:
+📊 Modelo de datos en SQL Server con 8 tablas.
+⚙️ 32 procedimientos almacenados (CRUD para cada tabla).
+🐍 Backend en Python con pyodbc para conectarse y manipular datos.
