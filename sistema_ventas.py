@@ -2,7 +2,12 @@ import pyodbc
 
 def get_connection():
     return pyodbc.connect(
-        "DRIVER={ODBC Driver 17 for SQL server}"
+        "DRIVER={ODBC Driver 17 for SQL Server};"
+        "SERVER=GTAPIERO-POLI;"          # Cambia si usas otro servidor
+        "DATABASE=SistemaVentas;"
+        "UID=sa;"                    # Usuario de SQL Server
+        "PWD=tapiero;"
+        "TrustServerCertificate=Yes;"
     )
 
 # ---- ejemplo con clientes ----
