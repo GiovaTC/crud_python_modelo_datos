@@ -1,4 +1,7 @@
 # crud_python_modelo_datos
+
+<img width="2546" height="1079" alt="image" src="https://github.com/user-attachments/assets/aa643a74-53e1-49fb-a889-ff69a10b76eb" />
+
 # 📌 Sistema de Ventas – SQL Server + Python
 
 ## 🗄️ 1. Modelo de Datos en SQL Server
